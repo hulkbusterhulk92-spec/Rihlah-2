@@ -1,0 +1,9 @@
+RIHLAH: Journey of Iman — fail untuk Netlify
+
+Cara terbitkan:
+1. Log masuk ke https://app.netlify.com
+2. Pergi ke "Sites" > "Add new site" > "Deploy manually"
+3. Seret fail ZIP ini (atau folder yang telah dinyahzip) ke kotak muat naik.
+4. Netlify akan beri pautan .netlify.app — buka dan main.
+
+Nota: Kemajuan disimpan dalam pelayar setiap peranti (localStorage).
