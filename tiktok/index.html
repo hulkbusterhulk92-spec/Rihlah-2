@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TikTok HD Converter</title>
+<meta name="description" content="Tukar video kepada format terbaik TikTok (1080x1920, H.264, bitrate tinggi) supaya kualiti tak pecah. Semua diproses dalam telefon/komputer anda.">
+<meta name="theme-color" content="#0b0b10">
+<style>
+:root{
+  --bg:#0b0b10;--card:#15151d;--line:#262633;--text:#f2f2f5;--muted:#9a9aad;
+  --pink:#fe2c55;--cyan:#25f4ee;--ok:#3ddc84;--warn:#ffb020;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:560px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:22px;margin:4px 0 2px;letter-spacing:-.3px}
+h1 span{background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);margin:0 0 18px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:2px dashed var(--line);border-radius:12px;padding:26px 12px;text-align:center;cursor:pointer;transition:.15s}
+.drop:hover,.drop.over{border-color:var(--cyan);background:#25f4ee0d}
+.drop b{font-size:16px}
+.drop small{color:var(--muted)}
+input[type=file]{display:none}
+.info{font-size:13px;color:var(--muted);margin-top:10px;word-break:break-all}
+.info b{color:var(--text)}
+video{width:100%;max-height:420px;border-radius:10px;background:#000;margin-top:10px;display:block}
+label.h{display:block;font-weight:700;margin:4px 0 8px;font-size:14px}
+.seg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.seg.three{grid-template-columns:repeat(3,1fr)}
+.seg input{display:none}
+.seg label{border:1px solid var(--line);border-radius:10px;padding:9px 8px;text-align:center;cursor:pointer;font-size:13px;line-height:1.3}
+.seg label small{display:block;color:var(--muted);font-size:11px}
+.seg input:checked+label{border-color:var(--pink);background:#fe2c5514;box-shadow:inset 0 0 0 1px var(--pink)}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:13px;margin:6px 0;cursor:pointer}
+.chk input{margin-top:3px;accent-color:var(--pink)}
+.chk small{color:var(--muted);display:block}
+button.go{width:100%;border:0;border-radius:12px;padding:14px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;
+  background:linear-gradient(90deg,#1fd6d0,var(--pink));}
+button.go:disabled{opacity:.45;cursor:not-allowed}
+button.sec{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+.bar{height:10px;background:#22222c;border-radius:99px;overflow:hidden;margin:12px 0 6px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink));transition:width .2s}
+.status{font-size:13px;color:var(--muted);min-height:20px}
+.warn{border-left:3px solid var(--warn);background:#ffb0200f;padding:8px 10px;border-radius:6px;font-size:13px;margin-top:10px}
+.okbox{border-left:3px solid var(--ok);background:#3ddc840f;padding:8px 10px;border-radius:6px;font-size:13px;margin-top:10px}
+a.dl{display:block;text-align:center;margin-top:12px;padding:14px;border-radius:12px;background:var(--ok);color:#06140b;font-weight:800;text-decoration:none;font-size:16px}
+.tips h2{font-size:16px;margin:0 0 8px}
+.tips ol{padding-left:20px;margin:0;font-size:13.5px}
+.tips li{margin:6px 0}
+.hide{display:none!important}
+details{font-size:12px;color:var(--muted);margin-top:8px}
+pre{white-space:pre-wrap;max-height:180px;overflow:auto;background:#0006;padding:8px;border-radius:8px;font-size:11px}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+  <h1>TikTok <span>HD Converter</span></h1>
+  <p class="sub">Tukar video ke format yang TikTok suka (1080×1920, H.264, bitrate tinggi) supaya tak pecah lepas upload. Video <b>tidak dimuat naik</b> ke mana-mana — semua diproses dalam peranti anda.</p>
+
+  <section class="card">
+    <label class="drop" id="drop" for="file">
+      <b>📂 Pilih video</b>
+      <small>atau seret fail ke sini · MP4 / MOV / WEBM / MKV</small>
+    </label>
+    <input type="file" id="file" accept="video/*,.mov,.mkv">
+    <div class="info hide" id="info"></div>
+    <video id="preview" class="hide" controls playsinline muted></video>
+    <div id="srcNote"></div>
+  </section>
+
+  <section class="card">
+    <label class="h">Bentuk video (9:16)</label>
+    <div class="seg" id="modeSeg">
+      <input type="radio" name="mode" id="m-blur" value="blur" checked><label for="m-blur">Latar kabur<small>Penuh skrin, tiada potong</small></label>
+      <input type="radio" name="mode" id="m-crop" value="crop"><label for="m-crop">Potong penuh<small>Zoom isi skrin</small></label>
+      <input type="radio" name="mode" id="m-bar" value="bar"><label for="m-bar">Bar hitam<small>Tiada potong</small></label>
+      <input type="radio" name="mode" id="m-keep" value="keep"><label for="m-keep">Kekal nisbah asal<small>Cuma naikkan ke 1080p</small></label>
+    </div>
+
+    <label class="h">Kualiti encode</label>
+    <div class="seg three">
+      <input type="radio" name="q" id="q-fast" value="fast"><label for="q-fast">Laju<small>siap cepat</small></label>
+      <input type="radio" name="q" id="q-bal" value="bal" checked><label for="q-bal">Seimbang<small>disyorkan</small></label>
+      <input type="radio" name="q" id="q-best" value="best"><label for="q-best">Terbaik<small>lambat</small></label>
+    </div>
+
+    <label class="h">Frame rate</label>
+    <div class="seg">
+      <input type="radio" name="fps" id="f-30" value="30" checked><label for="f-30">30 fps<small>paling selamat untuk TikTok</small></label>
+      <input type="radio" name="fps" id="f-src" value="src"><label for="f-src">Ikut asal<small>maks 60 fps</small></label>
+    </div>
+
+    <label class="chk"><input type="checkbox" id="sharp"><span>Tajamkan sedikit<small>Bantu kekal tajam selepas TikTok mampatkan semula. Jangan guna untuk video yang dah tajam.</small></span></label>
+    <label class="chk"><input type="checkbox" id="remux" checked><span>Mod pantas jika video dah sesuai<small>Kalau video dah H.264 1080×1920, cuma susun semula fail tanpa encode — 0% kehilangan kualiti.</small></span></label>
+  </section>
+
+  <section class="card">
+    <button class="go" id="go" disabled>Pilih video dahulu</button>
+    <div class="bar"><i id="prog"></i></div>
+    <div class="status" id="status">Enjin akan dimuatkan bila anda tekan Tukar (≈31MB, sekali sahaja).</div>
+    <div class="row hide" id="cancelRow"><span></span><button class="sec" id="cancel">Batal</button></div>
+    <div id="result" class="hide">
+      <video id="outVideo" controls playsinline></video>
+      <div class="info" id="outInfo"></div>
+      <a class="dl" id="dl" download>⬇️ Simpan video</a>
+    </div>
+    <details><summary>Log teknikal</summary><pre id="log"></pre></details>
+  </section>
+
+  <section class="card tips">
+    <h2>📌 Wajib buat masa upload</h2>
+    <ol>
+      <li>Dalam TikTok: tekan <b>Post → More options / Lagi pilihan</b> dan hidupkan <b>“Allow high-quality uploads” / Upload HD</b>.</li>
+      <li>Upload guna <b>Wi-Fi</b> — TikTok turunkan kualiti bila line data perlahan.</li>
+      <li>Upload fail terus dari galeri. <b>Jangan</b> rakam/sunting semula dalam editor TikTok (filter & teks dalam app TikTok akan encode semula).</li>
+      <li>iPhone: video <b>HDR</b> selalu jadi pudar/pecah. Matikan di <i>Settings → Camera → Record Video → HDR Video</i>, sebelum rakam — app ini tak dapat betulkan warna HDR sepenuhnya.</li>
+      <li>Untuk hasil terbaik, rakam terus dalam 1080p atau 4K 30fps dengan cahaya yang cukup — video gelap paling cepat pecah.</li>
+    </ol>
+  </section>
+</main>
+
+<script type="module">
+import { FFmpeg } from "./lib/ffmpeg/index.js";
+
+const $ = (id) => document.getElementById(id);
+const W = 1080, H = 1920;
+
+let file = null, meta = null, ffmpeg = null, loaded = false, running = false, outURL = null, srcURL = null;
+
+// ---------- File picking ----------
+$("file").addEventListener("change", (e) => e.target.files[0] && pick(e.target.files[0]));
+const drop = $("drop");
+["dragenter", "dragover"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", (e) => e.dataTransfer.files[0] && pick(e.dataTransfer.files[0]));
+
+function fmtSize(b) { return b > 1e9 ? (b / 1e9).toFixed(2) + " GB" : (b / 1e6).toFixed(1) + " MB"; }
+function fmtTime(s) { s = Math.round(s); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+
+function pick(f) {
+  if (running) return;
+  file = f; meta = null;
+  if (srcURL) URL.revokeObjectURL(srcURL);
+  srcURL = URL.createObjectURL(f);
+  const v = $("preview");
+  v.src = srcURL; v.classList.remove("hide");
+  $("result").classList.add("hide");
+  $("srcNote").innerHTML = "";
+  $("info").classList.remove("hide");
+  $("info").innerHTML = `<b>${f.name}</b> · ${fmtSize(f.size)}`;
+  v.onloadedmetadata = () => {
+    meta = { w: v.videoWidth, h: v.videoHeight, dur: v.duration };
+    const orient = meta.w > meta.h ? "landskap" : meta.w < meta.h ? "potret" : "segi empat";
+    $("info").innerHTML = `<b>${f.name}</b> · ${fmtSize(f.size)} · ${meta.w}×${meta.h} (${orient}) · ${fmtTime(meta.dur)}`;
+    if (meta.w > meta.h) $("m-blur").checked = true;
+  };
+  v.onerror = () => { meta = null; $("info").innerHTML += "<br>Pratonton tak dapat dimainkan dalam pelayar, tapi masih boleh cuba tukar."; };
+  if (f.size > 1.5e9) {
+    $("srcNote").innerHTML = `<div class="warn">Fail sangat besar (${fmtSize(f.size)}). Pelayar mungkin kehabisan memori. Cuba potong video dahulu atau guna komputer.</div>`;
+  }
+  $("go").disabled = false;
+  $("go").textContent = "Tukar untuk TikTok";
+}
+
+// ---------- Engine ----------
+const logEl = $("log");
+let logBuf = [];
+function log(s) { logBuf.push(s); if (logBuf.length > 400) logBuf.shift(); }
+setInterval(() => { if (logBuf.length) { logEl.textContent = logBuf.join("\n"); logEl.scrollTop = 1e9; } }, 500);
+
+function setProg(p) { $("prog").style.width = Math.max(0, Math.min(100, p * 100)).toFixed(1) + "%"; }
+function setStatus(s) { $("status").textContent = s; }
+
+async function loadEngine() {
+  if (loaded) return;
+  ffmpeg = new FFmpeg();
+  ffmpeg.on("log", ({ message }) => { log(message); onLogLine(message); });
+  setStatus("Memuatkan enjin video (≈31MB, sekali sahaja)…");
+  const base = new URL("./lib/core/", location.href).href;
+  await ffmpeg.load({ coreURL: base + "ffmpeg-core.js", wasmURL: base + "ffmpeg-core.wasm" });
+  loaded = true;
+}
+
+// Progress parsed from ffmpeg's own "time=" log lines (more reliable than the progress event).
+let curDur = 0, t0 = 0;
+function onLogLine(m) {
+  const mt = /time=\s*(\d+):(\d+):([\d.]+)/.exec(m);
+  if (mt && curDur > 0) {
+    const t = (+mt[1]) * 3600 + (+mt[2]) * 60 + parseFloat(mt[3]);
+    const p = Math.min(1, t / curDur);
+    setProg(p);
+    const el = (performance.now() - t0) / 1000;
+    const eta = p > 0.02 ? el / p - el : 0;
+    setStatus(`Menukar… ${(p * 100).toFixed(0)}%` + (eta ? ` · baki ≈ ${fmtTime(eta)}` : ""));
+  }
+}
+
+// ---------- Probe source ----------
+async function probe() {
+  const lines = [];
+  const h = ({ message }) => lines.push(message);
+  ffmpeg.on("log", h);
+  try { await ffmpeg.exec(["-hide_banner", "-i", "/in/" + file.name]); } catch {}
+  ffmpeg.off("log", h);
+  const txt = lines.join("\n");
+  const vLine = (txt.match(/Stream #\d+:\d+.*Video:.*$/m) || [""])[0];
+  const info = {
+    codec: (vLine.match(/Video:\s*(\w+)/) || [])[1] || "",
+    pix: (vLine.match(/\b(yuv\w+|yuvj\w+|p010\w*)\b/) || [])[1] || "",
+    hdr: /bt2020|smpte2084|arib-std-b67|p010|10le/.test(vLine),
+    fps: parseFloat((vLine.match(/([\d.]+)\s*fps/) || [])[1] || "0"),
+    hasAudio: /Stream #\d+:\d+.*Audio:/.test(txt),
+    audioCodec: ((txt.match(/Audio:\s*(\w+)/) || [])[1]) || "",
+    dur: 0,
+  };
+  const d = txt.match(/Duration:\s*(\d+):(\d+):([\d.]+)/);
+  if (d) info.dur = (+d[1]) * 3600 + (+d[2]) * 60 + parseFloat(d[3]);
+  return info;
+}
+
+// ---------- Build filter ----------
+function buildFilter(mode, fpsOpt, sharp, srcFps, srcW, srcH) {
+  const pre = [];
+  if (fpsOpt === "30" && (!srcFps || srcFps > 30.5)) pre.push("fps=30");
+  else if (srcFps > 60.5) pre.push("fps=60");
+  const pre_ = pre.length ? pre.join(",") + "," : "";
+  const post = (sharp ? ",unsharp=5:5:0.45:5:5:0" : "") + ",format=yuv420p";
+  const L = "flags=lanczos";
+  if (mode === "blur") {
+    return `[0:v]${pre_}split=2[a][b];` +
+      `[a]scale=270:480:force_original_aspect_ratio=increase,crop=270:480,boxblur=12:3,scale=${W}:${H},setsar=1[bg];` +
+      `[b]scale=${W}:${H}:force_original_aspect_ratio=decrease:force_divisible_by=2:${L},setsar=1[fg];` +
+      `[bg][fg]overlay=(W-w)/2:(H-h)/2${post}[v]`;
+  }
+  if (mode === "crop") {
+    return `[0:v]${pre_}scale=${W}:${H}:force_original_aspect_ratio=increase:${L},crop=${W}:${H},setsar=1${post}[v]`;
+  }
+  if (mode === "bar") {
+    return `[0:v]${pre_}scale=${W}:${H}:force_original_aspect_ratio=decrease:force_divisible_by=2:${L},pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2:black,setsar=1${post}[v]`;
+  }
+  // keep: short side → 1080
+  const sc = (srcW && srcH && srcW > srcH) ? `-2:${W}` : `${W}:-2`;
+  return `[0:v]${pre_}scale=${sc}:${L},setsar=1${post}[v]`;
+}
+
+const Q = {
+  fast: { preset: "ultrafast", crf: "19" },
+  bal:  { preset: "veryfast",  crf: "18" },
+  best: { preset: "medium",    crf: "17" },
+};
+
+// ---------- Convert ----------
+$("go").addEventListener("click", convert);
+$("cancel").addEventListener("click", () => {
+  if (!running || !ffmpeg) return;
+  ffmpeg.terminate(); loaded = false; running = false;
+  setStatus("Dibatalkan."); setProg(0); uiIdle();
+});
+
+function uiBusy() { running = true; $("go").disabled = true; $("go").textContent = "Sedang menukar…"; $("cancelRow").classList.remove("hide"); }
+function uiIdle() { running = false; $("go").disabled = !file; $("go").textContent = "Tukar untuk TikTok"; $("cancelRow").classList.add("hide"); }
+
+async function convert() {
+  if (!file || running) return;
+  uiBusy();
+  $("result").classList.add("hide");
+  setProg(0);
+  const mounted = [];
+  try {
+    await loadEngine();
+    setStatus("Membaca video…");
+    try { await ffmpeg.createDir("/in"); } catch {}
+    await ffmpeg.mount("WORKERFS", { files: [file] }, "/in");
+    mounted.push("/in");
+    const src = await probe();
+    curDur = src.dur || meta?.dur || 0;
+    const mode = document.querySelector("input[name=mode]:checked").value;
+    const fpsOpt = document.querySelector("input[name=fps]:checked").value;
+    const sharp = $("sharp").checked;
+    const q = Q[document.querySelector("input[name=q]:checked").value];
+
+    const sw = meta?.w || 0, sh = meta?.h || 0;
+    const canRemux = $("remux").checked && src.codec === "h264" && /^yuvj?420p$/.test(src.pix) && !src.hdr &&
+      sw === W && sh === H && (!src.fps || src.fps <= (fpsOpt === "30" ? 30.5 : 60.5)) && !sharp &&
+      (!src.hasAudio || src.audioCodec === "aac");
+
+    let args;
+    const out = "out.mp4";
+    if (canRemux) {
+      args = ["-i", "/in/" + file.name, "-map", "0:v:0", "-map", "0:a:0?", "-c", "copy", "-movflags", "+faststart", out];
+    } else {
+      const vf = buildFilter(mode, fpsOpt, sharp, src.fps, sw, sh);
+      args = ["-i", "/in/" + file.name,
+        "-filter_complex", vf, "-map", "[v]", "-map", "0:a:0?",
+        "-c:v", "libx264", "-preset", q.preset, "-crf", q.crf,
+        "-maxrate", "16M", "-bufsize", "32M",
+        "-profile:v", "high", "-level:v", "4.2", "-pix_fmt", "yuv420p",
+        "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709",
+        "-g", "60", "-bf", "2",
+        "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
+        "-movflags", "+faststart", out];
+    }
+    log("> ffmpeg " + args.join(" "));
+    t0 = performance.now();
+    setStatus(canRemux ? "Video dah sesuai — mod pantas tanpa encode…" : "Menukar… 0%");
+    const ret = await ffmpeg.exec(args);
+    if (ret !== 0) throw new Error("ffmpeg gagal (kod " + ret + "). Lihat log teknikal.");
+    const data = await ffmpeg.readFile(out);
+    await ffmpeg.deleteFile(out);
+    const blob = new Blob([data.buffer], { type: "video/mp4" });
+    if (outURL) URL.revokeObjectURL(outURL);
+    outURL = URL.createObjectURL(blob);
+    $("outVideo").src = outURL;
+    const name = file.name.replace(/\.[^.]+$/, "") + "_tiktokHD.mp4";
+    $("dl").href = outURL; $("dl").download = name;
+    const took = (performance.now() - t0) / 1000;
+    const kbps = curDur ? Math.round(blob.size * 8 / curDur / 1000) : 0;
+    $("outInfo").innerHTML = `<b>${name}</b> · ${fmtSize(blob.size)}` + (kbps ? ` · ≈${(kbps / 1000).toFixed(1)} Mbps` : "") +
+      ` · siap dalam ${fmtTime(took)}` +
+      (canRemux ? `<div class="okbox">Video asal dah format terbaik — disalin terus tanpa kehilangan kualiti (cuma dioptimumkan untuk upload).</div>` : "") +
+      (src.hdr && !canRemux ? `<div class="warn">Video asal HDR — warna mungkin nampak pudar selepas ditukar. Untuk hasil terbaik matikan HDR Video semasa rakam.</div>` : "");
+    $("result").classList.remove("hide");
+    setProg(1);
+    setStatus("✅ Siap! Simpan video, kemudian upload ke TikTok dengan Upload HD dihidupkan.");
+  } catch (e) {
+    console.error(e);
+    if (running) {
+      setStatus("❌ " + (e?.message || e) + (String(e).includes("memory") ? " — fail terlalu besar untuk pelayar ini." : ""));
+    }
+  } finally {
+    if (loaded) for (const m of mounted) { try { await ffmpeg.unmount(m); } catch {} }
+    if (running) uiIdle();
+  }
+}
+</script>
+</body>
+</html>
